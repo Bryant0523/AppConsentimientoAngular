@@ -1,0 +1,133 @@
+<h2>Plantillas</h2>
+
+<mat-card class="card">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Buscar plantilla</mat-label>
+    <input matInput [(ngModel)]="buscarPlantilla">
+  </mat-form-field>
+
+  <br>
+
+  <button mat-raised-button color="primary" (click)="mostrarFormulario = !mostrarFormulario">
+    {{ mostrarFormulario ? 'Cerrar' : 'Nueva plantilla' }}
+  </button>
+
+</mat-card>
+
+<br>
+
+@if(mostrarFormulario){
+
+<mat-card class="card">
+
+  <h3>Nueva plantilla</h3>
+
+  <div class="form-grid">
+
+    <mat-form-field>
+      <mat-label>Nombre</mat-label>
+      <input matInput [(ngModel)]="nuevaPlantilla.nombre">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Grupo</mat-label>
+      <input matInput [(ngModel)]="nuevaPlantilla.grupo">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Código</mat-label>
+      <input matInput [(ngModel)]="nuevaPlantilla.codigo">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Versión</mat-label>
+      <input matInput [(ngModel)]="nuevaPlantilla.version">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Fecha</mat-label>
+      <input matInput type="date" [(ngModel)]="nuevaPlantilla.fecha">
+    </mat-form-field>
+
+  </div>
+
+  <br>
+
+  <textarea [(ngModel)]="nuevaPlantilla.contenido" rows="6"></textarea>
+
+  <br><br>
+  <div class="variables-box">
+
+  <h4>Variables disponibles</h4>
+
+  <div class="variables-list">
+
+    <span (click)="copiar('{{paciente.nombre}}')">
+      {{'{{paciente.nombre}}'}}
+    </span>
+
+    <span (click)="copiar('{{paciente.numeroDocumento}}')">
+      {{'{{paciente.numeroDocumento}}'}}
+    </span>
+
+    <span (click)="copiar('{{medico}}')">
+      {{'{{medico}}'}}
+    </span>
+
+    <span (click)="copiar('{{enfermero}}')">
+      {{'{{enfermero}}'}}
+    </span>
+
+    <span (click)="copiar('{{fecha}}')">
+      {{'{{fecha}}'}}
+    </span>
+
+  </div>
+
+</div>
+
+  <button mat-raised-button (click)="subirWord()">Subir Word</button>
+
+  <br><br>
+
+  <button mat-raised-button color="primary" (click)="guardarPlantilla()">
+    {{ idEditando !== null ? 'Actualizar' : 'Guardar' }}
+  </button>
+
+</mat-card>
+
+}
+
+<br>
+
+<mat-card class="card">
+
+  <h3>Listado</h3>
+
+  @for (p of plantillas; track p; let i = $index) {
+
+    @if(
+      p.nombre.toLowerCase().includes(buscarPlantilla.toLowerCase()) ||
+      p.grupo.toLowerCase().includes(buscarPlantilla.toLowerCase())
+    ){
+
+      <div class="item">
+
+        <div>
+          <b>{{p.nombre}}</b><br>
+          <small>{{p.grupo}} | {{p.codigo}} | v{{p.version}}</small>
+        </div>
+
+        <div class="acciones">
+          <button mat-button (click)="editarPlantilla(p)">Editar</button>
+          <button mat-button color="warn" (click)="eliminarPlantilla(i)">Eliminar</button>
+        </div>
+
+      </div>
+
+    }
+
+  }
+
+</mat-card>

@@ -1,0 +1,44 @@
+/* CARDS */
+.card{
+  padding: 20px;
+  border-radius: 12px;
+}
+
+/* FIRMA */
+.firma-card{
+  text-align: center;
+}
+
+.firma-container{
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.firma{
+  width: 350px;
+  height: 180px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  background: white;
+}
+
+/* BOTONES FIRMA */
+.botones-firma{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* FORMULARIO GRID */
+.form-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+/* IMPORTANTE: quitar ancho fijo */
+mat-form-field{
+  width: 100%;
+}

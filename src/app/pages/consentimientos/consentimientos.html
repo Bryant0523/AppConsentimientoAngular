@@ -1,0 +1,93 @@
+<h2>Consentimiento</h2>
+
+@if (paciente) {
+  <!-- FIRMA -->
+  <mat-card class="card firma-card">
+    <h3>Firma del paciente</h3>
+
+    <div class="firma-container">
+      <canvas #canvasFirma class="firma"></canvas>
+    </div>
+
+    <div class="botones-firma">
+      <button mat-raised-button color="warn" (click)="limpiarFirma()">Limpiar</button>
+
+      <button mat-raised-button color="primary" (click)="guardarFirma()">Guardar firma</button>
+    </div>
+
+    @if (firmaGuardada) {
+      <h4>Firma guardada</h4>
+
+      <div class="firma-container">
+        <img [src]="firmaGuardada" width="200" />
+      </div>
+    }
+  </mat-card>
+
+  <br />
+
+  <!-- DATOS -->
+  <mat-card class="card">
+    <h3>Datos del consentimiento</h3>
+
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Médico</mat-label>
+        <mat-select [(ngModel)]="consentimiento.medico">
+          <mat-option value="">Seleccione</mat-option>
+          @for (m of medicos; track m) {
+            <mat-option [value]="m.nombre">{{ m.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Enfermero</mat-label>
+        <mat-select [(ngModel)]="consentimiento.enfermero">
+          <mat-option value="">Seleccione</mat-option>
+          @for (e of enfermeros; track e) {
+            <mat-option [value]="e.nombre">{{ e.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      
+      
+
+      <mat-form-field>
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" matInput type="date" [(ngModel)]="consentimiento.fecha" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Grupo</mat-label>
+        <mat-select
+          [(ngModel)]="consentimiento.grupoPlantilla"
+          (selectionChange)="filtrarPlantillas()"
+        >
+          <mat-option value="">Seleccionar</mat-option>
+          @for (g of gruposPlantillas; track g) {
+            <mat-option [value]="g">{{ g }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Plantilla</mat-label>
+        <mat-select [(ngModel)]="consentimiento.plantilla">
+          <mat-option value="">Seleccionar</mat-option>
+          @for (p of plantillasFiltradas; track p) {
+            <mat-option [value]="p.nombre">{{ p.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <br />
+
+    <button mat-raised-button color="primary" (click)="generarConsentimiento()">Generar PDF</button>
+  </mat-card>
+}

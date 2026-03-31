@@ -1,0 +1,19 @@
+/* LOGIN */
+.login-card{
+  max-width: 400px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+/* GRID ADMIN */
+.admin-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.admin-grid button{
+  height: 60px;
+  font-size: 16px;
+}

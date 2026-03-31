@@ -1,0 +1,75 @@
+<h2>Enfermeros</h2>
+
+<mat-card class="card">
+  <mat-form-field appearance="outline">
+    <mat-label>Buscar enfermero</mat-label>
+    <input matInput [(ngModel)]="buscarEnfermero">
+  </mat-form-field>
+
+  <br>
+
+  <button mat-raised-button color="primary" (click)="mostrarFormulario = !mostrarFormulario">
+    {{ mostrarFormulario ? 'Cerrar' : 'Registrar enfermero' }}
+  </button>
+</mat-card>
+
+<br>
+
+@if(mostrarFormulario){
+<mat-card class="card">
+  <h3>{{ idEditando !== null ? 'Editar enfermero' : 'Nuevo enfermero' }}</h3>
+
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput [(ngModel)]="nuevoEnfermero.nombre">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Documento</mat-label>
+      <input matInput [(ngModel)]="nuevoEnfermero.documentoenfermero">
+    </mat-form-field>
+  </div>
+
+  <br>
+
+  <label>Firma</label>
+  <input type="file" (change)="subirFirma($event)">
+
+  <br><br>
+
+  <button mat-raised-button color="primary" (click)="guardarEnfermero()">
+    {{ idEditando !== null ? 'Actualizar' : 'Guardar' }}
+  </button>
+</mat-card>
+}
+
+<br>
+
+<mat-card class="card">
+  <h3>Listado</h3>
+
+  <div class="lista">
+    @if (cargando) {
+      <p>Cargando...</p>
+    } @else if (enfermeros.length === 0) {
+      <p>No hay enfermeros registrados</p>
+    } @else {
+      @for (e of enfermeros; track e.id) {
+        @if(e.nombre.toLowerCase().includes(buscarEnfermero.toLowerCase())) {
+          <div class="item">
+            <div>
+              <b>{{e.nombre}}</b><br>
+              <small>{{e.documentoenfermero}}</small>
+            </div>
+
+            <div class="acciones">
+              <button mat-button (click)="editarEnfermero(e)">Editar</button>
+              <button mat-button color="warn" (click)="eliminarEnfermero(e.id)">Eliminar</button>
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</mat-card>

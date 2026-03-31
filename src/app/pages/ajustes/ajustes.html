@@ -1,0 +1,53 @@
+<h2>Ajustes del sistema</h2>
+
+<!-- LOGIN -->
+@if(!autorizado){
+
+<mat-card class="card login-card">
+
+  <h3>Acceso administrador</h3>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Contraseña</mat-label>
+    <input matInput type="password" [(ngModel)]="password">
+  </mat-form-field>
+
+  <br>
+
+  <button mat-raised-button color="primary" (click)="validar()">
+    Entrar
+  </button>
+
+</mat-card>
+
+}
+
+<!-- PANEL ADMIN -->
+@if(autorizado){
+
+<mat-card class="card">
+
+  <h3>Administración</h3>
+
+  <div class="admin-grid">
+
+    <button mat-raised-button color="primary" routerLink="/medicos">
+      👨‍⚕️ Médicos
+    </button>
+
+    <button mat-raised-button color="primary" routerLink="/enfermeros">
+      🧑‍⚕️ Enfermeros
+    </button>
+
+    <button mat-raised-button color="primary" routerLink="/plantillas">
+      📄 Plantillas
+    </button>
+
+  </div>
+  <br>
+  <button mat-raised-button color="warn" (click)="logout()">
+  Cerrar sesión 
+</button>
+</mat-card>
+
+}

@@ -1,0 +1,92 @@
+<h2>Médicos</h2>
+
+<mat-card class="card">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Buscar médico</mat-label>
+    <input matInput [(ngModel)]="buscarMedico">
+  </mat-form-field>
+
+  <br>
+
+  <button mat-raised-button color="primary" (click)="mostrarFormulario = !mostrarFormulario">
+    {{ mostrarFormulario ? 'Cerrar' : 'Registrar médico' }}
+  </button>
+
+</mat-card>
+
+<br>
+
+@if(mostrarFormulario){
+
+<mat-card class="card">
+
+  <h3>Nuevo médico</h3>
+
+  <div class="form-grid">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput [(ngModel)]="nuevoMedico.nombre">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cédula</mat-label>
+      <input matInput [(ngModel)]="nuevoMedico.cedula">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Registro médico</mat-label>
+      <input matInput [(ngModel)]="nuevoMedico.registromedico">
+    </mat-form-field>
+
+  </div>
+
+  <br>
+
+  <label>Firma</label>
+  <input type="file" (change)="subirFirma($event)">
+
+  <br><br>
+
+  <button mat-raised-button color="primary" (click)="guardarMedico()">
+    Guardar
+  </button>
+
+</mat-card>
+
+}
+
+<br>
+
+<mat-card class="card">
+
+  <h3>Listado</h3>
+
+  <div class="lista">
+
+    @for (m of medicos; track m; let i = $index) {
+
+      @if(m.nombre.toLowerCase().includes(buscarMedico.toLowerCase())){
+
+        <div class="item">
+
+          <div>
+            <b>{{m.nombre}}</b><br>
+            <small>{{m.cedula}}</small>
+          </div>
+
+          <div class="acciones">
+            <button mat-button (click)="editarMedico(m)">Editar</button>
+            <button mat-button color="warn" (click)="eliminarMedico(i)">Eliminar</button>
+          </div>
+
+        </div>
+
+      }
+
+    }
+
+  </div>
+
+</mat-card>
