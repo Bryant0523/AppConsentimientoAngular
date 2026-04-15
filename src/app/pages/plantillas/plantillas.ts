@@ -154,7 +154,7 @@ export class PlantillasComponent implements OnInit {
       .trim();
 
     this.nuevaPlantilla.contenido = html;
-    this.cdr.markForCheck(); // ✅ markForCheck en lugar de detectChanges
+    this.cdr.markForCheck(); 
     this.mostrarMensaje('✅ Word subido correctamente');
   }
 

@@ -2,22 +2,24 @@
 
   <!-- MENU LATERAL -->
   <mat-sidenav mode="side" opened class="menu">
-    <img src="/src/assets/logo.jpg">
-    <h2 class="logo">Clínica</h2>
 
-    <button mat-button routerLink="/pacientes">Pacientes</button>
-    
-    <button mat-button routerLink="/ajustes">Ajustes</button>
+    <div class="logo-container">
+      <img src="assets/logo.jpg" class="logo" alt="Logo">
+      <h2 class="titulo">Consentimientos DHI</h2>
+    </div>
+
+    <div class="menu-items">
+      <button mat-button routerLink="/pacientes">Pacientes</button>
+      <button mat-button routerLink="/ajustes">Ajustes</button>
+    </div>
 
   </mat-sidenav>
 
   <!-- CONTENIDO -->
   <mat-sidenav-content>
-
     <div class="contenido">
       <router-outlet></router-outlet>
     </div>
-
   </mat-sidenav-content>
 
 </mat-sidenav-container>

@@ -3,10 +3,13 @@ const path = require('path');
 const mammoth = require('mammoth');
 const db = require('./database');
 
+
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
+    icon: path.join(__dirname, '../build/LOGO.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -20,6 +23,9 @@ function createWindow() {
     win.loadFile(path.join(__dirname, '../dist/consentimientos-app/browser/index.html'));
   }
 }
+
+
+
 
 // ========================
 // WORD
@@ -48,7 +54,7 @@ ipcMain.handle('seleccionar-archivo', async () => {
 ipcMain.handle('pacientes:obtener', () => {
   try {
     const pacientes = db.prepare('SELECT * FROM pacientes').all();
-    console.log('Pacientes en BD:', pacientes);
+    
     return pacientes;
   } catch (error) {
     console.error('Error al obtener pacientes:', error.message);
@@ -210,6 +216,7 @@ ipcMain.handle('consentimientos:crear', (_event, consentimiento) => {
 ipcMain.handle('consentimientos:eliminar', (_event, id) => {
   return db.prepare('DELETE FROM consentimientos WHERE id = ?').run(id);
 });
+
 
 // ========================
 // APP

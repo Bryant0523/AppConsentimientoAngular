@@ -58,29 +58,51 @@ hr{
   height: 100vh;
 }
 
-.menu{
+.menu {
   width: 220px;
-  background: #6ec2bd;
-  color: white;
-  padding: 15px;
+  background: #2b8590; /* 🔥 más profesional */
+  color: #f9f8f7;
+  padding: 20px 10px;
 }
 
-.menu button{
-  display: block;
+.menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
   text-align: left;
-  color: white;
+  color: #f9f8f7;
   margin-bottom: 10px;
+  background: transparent;
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.2s;
 }
-
-.logo{
+.menu button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.logo {
+  width: 80px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px auto;
+  border-radius: 10px;
+}
+.logo-container {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-.contenido{
+.titulo {
+  color: #f9f8f7;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.contenido {
   padding: 20px;
-  background: #ffffff;
+  background: #f9f8f7; /* gris suave */
   height: 100%;
 }
 .card{
@@ -94,7 +116,7 @@ hr{
   height: 200px;
   border: 2px dashed #ccc;
   border-radius: 10px;
-  background: white;
+  background: #f9f8f7;
 }
 
 mat-form-field{

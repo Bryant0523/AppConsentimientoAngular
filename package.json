@@ -1,6 +1,7 @@
 {
   "name": "consentimientos-app",
   "version": "0.0.0",
+  "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +10,32 @@
     "electron:build": "ng build && electron electron/main.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
+    
   },
+  "build": {
+    "appId": "com.roook.hourscontrol",
+    "productName": "Rook Hours Control",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/main.js",
+      "electron/preload.js"
+      
+    ],
+    "win": {
+  "target": "nsis",
+  "icon": "build/logo.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/logo.ico"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  
   "private": true,
   "packageManager": "npm@11.9.0",
   "dependencies": {

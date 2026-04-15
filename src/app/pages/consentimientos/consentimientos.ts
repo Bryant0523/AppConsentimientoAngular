@@ -66,7 +66,7 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit() {
-    // ✅ Cargar todo desde SQLite
+   
     const pacientes = await this.electronService.obtenerPacientes();
     this.paciente = pacientes.find(
       (p: any) => p.documentopaciente == this.documento

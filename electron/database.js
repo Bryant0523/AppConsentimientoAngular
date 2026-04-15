@@ -5,7 +5,7 @@ const { app } = require('electron');
 const dbPath = path.join(app.getPath('userData'), 'consentimientos.db');
 const db = new Database(dbPath);
 app.whenReady().then(() => {
-  console.log('BD ubicada en:', app.getPath('userData'));
+  
   createWindow();
 });
 
