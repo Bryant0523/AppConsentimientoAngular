@@ -2,26 +2,28 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const { app } = require('electron');
 
+// app.getPath() es seguro aquí porque database.js se importa
+// DENTRO de app.whenReady() desde main.js
 const dbPath = path.join(app.getPath('userData'), 'consentimientos.db');
 const db = new Database(dbPath);
-app.whenReady().then(() => {
-  
-  createWindow();
-});
 
+// Activar claves foráneas (SQLite las desactiva por defecto)
+db.pragma('foreign_keys = ON');
+
+// Crear tablas si no existen
 db.exec(`
   CREATE TABLE IF NOT EXISTS pacientes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
     tipoDocumento TEXT,
-    numeroDocumento INTEGER UNIQUE,
+    numeroDocumento TEXT UNIQUE,
     lugarExpedicion TEXT
   );
 
   CREATE TABLE IF NOT EXISTS medicos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
-    cedula INTEGER UNIQUE,
+    cedula TEXT UNIQUE,
     registromedico TEXT UNIQUE,
     firma TEXT
   );
@@ -29,7 +31,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS enfermeros (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
-    documentoenfermero INTEGER UNIQUE,
+    documentoenfermero TEXT UNIQUE,
     firma TEXT
   );
 
@@ -58,7 +60,4 @@ db.exec(`
   );
 `);
 
-
-
 module.exports = db;
-

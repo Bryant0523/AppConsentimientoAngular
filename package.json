@@ -24,12 +24,12 @@
       
     ],
     "win": {
-  "target": "nsis",
-  "icon": "build/logo.ico"
+      "target": "nsis",
+      "icon": "build/logo.ico"
     },
     "mac": {
       "target": "dmg",
-      "icon": "assets/logo.ico"
+      "icon": "build/logo.ico"
     },
     "linux": {
       "target": "AppImage"
