@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const mammoth = require('mammoth');
 const db = require('./database');
+const fs = require('fs');
 
 
 
@@ -39,6 +40,17 @@ ipcMain.handle('leer-word', async (_event, filePath) => {
   }
 });
 
+ipcMain.handle('cargar-logo', (_event, rutaRelativa) => {
+  try {
+    const rutaAbsoluta = path.join(__dirname, '..', 'src', 'assets', rutaRelativa);
+    const buffer = fs.readFileSync(rutaAbsoluta);
+    return 'data:image/jpeg;base64,' + buffer.toString('base64');
+  } catch (error) {
+    console.error('Error cargando logo:', error);
+    return null;
+  }
+});
+
 ipcMain.handle('seleccionar-archivo', async () => {
   const resultado = await dialog.showOpenDialog({
     filters: [{ name: 'Word', extensions: ['docx'] }],
@@ -64,13 +76,13 @@ ipcMain.handle('pacientes:obtener', () => {
 
 ipcMain.handle('pacientes:crear', (_event, paciente) => {
   try {
-    console.log('Creando paciente:', paciente);
+   
     const stmt = db.prepare(`
       INSERT INTO pacientes (nombre, tipoDocumento, numeroDocumento, lugarExpedicion)
       VALUES (@nombre, @tipoDocumento, @numeroDocumento, @lugarExpedicion)
     `);
     const resultado = stmt.run(paciente);
-    console.log('Resultado:', resultado);
+    
     return resultado;
   } catch (error) {
     console.error('Error al crear paciente:', error.message);
@@ -139,7 +151,21 @@ ipcMain.handle('enfermeros:crear', (_event, enfermero) => {
   `);
   return stmt.run(enfermero);
 });
-
+// ipcMain.handle('consentimientos:obtener', (_event, numeroDocumento) => {
+//   return db.prepare(`
+//     SELECT c.*, p.nombre as nombrePaciente, p.numeroDocumento,
+//            m.nombre as nombreMedico, e.nombre as nombreEnfermero,
+//            pl.nombre as nombrePlantilla, pl.codigo, pl.version, 
+//            pl.fecha as fechaPlantilla, pl.contenido
+//     FROM consentimientos c
+//     JOIN pacientes p ON c.pacienteId = p.id
+//     LEFT JOIN medicos m ON c.medicoId = m.id
+//     LEFT JOIN enfermeros e ON c.enfermeroId = e.id
+//     JOIN plantillas pl ON c.plantillaId = pl.id
+//     WHERE p.numeroDocumento = ?
+//     ORDER BY c.id DESC
+//   `).all(numeroDocumento);
+// });
 ipcMain.handle('enfermeros:actualizar', (_event, enfermero) => {
   const stmt = db.prepare(`
     UPDATE enfermeros SET
@@ -185,6 +211,9 @@ ipcMain.handle('plantillas:actualizar', (_event, plantilla) => {
 });
 
 ipcMain.handle('plantillas:eliminar', (_event, id) => {
+  // ✅ Primero eliminar consentimientos asociados
+  db.prepare('DELETE FROM consentimientos WHERE plantillaId = ?').run(id);
+  // Luego eliminar la plantilla
   return db.prepare('DELETE FROM plantillas WHERE id = ?').run(id);
 });
 

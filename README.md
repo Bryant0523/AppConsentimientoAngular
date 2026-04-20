@@ -1,4 +1,58 @@
 # ConsentimientosApp
+GUIA INSTALACION ANGULAR DESDE CERO
+
+1. INSTALAR NODE.JS
+
+* Ir a: https://nodejs.org
+* Descargar version LTS (recomendada)
+* Durante la instalacion marcar: Add to PATH
+
+2. VERIFICAR INSTALACION
+   Abrir terminal (CMD o PowerShell) y ejecutar:
+   node -v
+   npm -v
+
+3. (SOLO SI HAY ERROR EN POWERSHELL)
+   Ejecutar en PowerShell como administrador:
+   Set-ExecutionPolicy RemoteSigned
+   Escribir: Y
+
+4. INSTALAR ANGULAR CLI
+   npm install -g @angular/cli
+
+Verificar:
+ng version
+
+EJECUTAR PROYECTO EXISTENTE
+
+5. IR A LA CARPETA DEL PROYECTO
+   cd ruta/de/tu/proyecto
+
+6. INSTALAR DEPENDENCIAS
+   npm install
+
+7. LEVANTAR PROYECTO
+   ng serve
+
+Abrir en navegador:
+http://localhost:4200
+
+PROBLEMAS COMUNES
+
+* npm no funciona en VS Code:
+  Reiniciar VS Code o usar CMD
+
+* Error en PowerShell:
+  Ejecutar Set-ExecutionPolicy RemoteSigned
+
+* Error instalando paquetes:
+  npm install --legacy-peer-deps
+
+CREAR NUEVO PROYECTO
+
+ng new mi-proyecto
+cd mi-proyecto
+ng serve
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
 

@@ -122,7 +122,7 @@ export class PlantillasComponent implements OnInit {
       this.mostrarMensaje('Error al eliminar la plantilla', 'error');
     }
   }
-
+  
   copiar(texto: string) {
     navigator.clipboard.writeText(texto);
     this.mostrarMensaje('✅ Variable copiada');
@@ -133,7 +133,7 @@ export class PlantillasComponent implements OnInit {
     if (!filePath) return;
 
     const resultado = await this.electronService.leerWord(filePath);
-
+    console.log('HTML completo:', resultado.html);
     if (!resultado.success) {
       this.mostrarMensaje('Error al leer el archivo: ' + resultado.error, 'error');
       return;
@@ -141,18 +141,27 @@ export class PlantillasComponent implements OnInit {
 
     let html = resultado.html || '';
 
-    html = html
-      .replace(/\uFFFD/g, '')
-      .replace(/<p><br><\/p>/gi, '\n\n')
-      .replace(/<p><\/p>/gi, '\n\n')
-      .replace(/<\/p>\s*<p>/gi, ' ')
-      .replace(/<br\s*\/?>/gi, ' ')
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/[ \t]+/g, ' ')
-      .replace(/\n\n\n+/g, '\n\n')
-      .trim();
-
+  html = html
+  .replace(/\uFFFD/g, '')
+  .replace(/<li>/gi, '\n• ')
+  .replace(/<\/li>/gi, '')
+  .replace(/<ul>/gi, '\n')
+  .replace(/<\/ul>/gi, '\n')
+  .replace(/<strong>/gi, '\n')
+  .replace(/<\/strong>/gi, '\n')
+  .replace(/<p><br><\/p>/gi, '\n\n')
+  .replace(/<p><\/p>/gi, '\n\n')
+  .replace(/<\/p>\s*<p>/gi, ' ')
+  .replace(/(\d+\.)\s*<br\s*\/?>\s*/gi, '$1 ') 
+  .replace(/<br\s*\/?>/gi, '\n')
+  .replace(/<[^>]*>/g, '')
+  .replace(/&nbsp;/g, ' ')
+  .replace(/[ \t]+/g, ' ')
+  .replace(/(?<!\d)\.\s+([A-ZÁÉÍÓÚÑ])/g, '.\n\n$1')
+  .replace(/\[\d+\][^\n]*/g, '')
+  .replace(/^.*↑.*$/gm, '')
+  .replace(/\n{3,}/g, '\n\n')
+  .trim();
     this.nuevaPlantilla.contenido = html;
     this.cdr.markForCheck(); 
     this.mostrarMensaje('✅ Word subido correctamente');

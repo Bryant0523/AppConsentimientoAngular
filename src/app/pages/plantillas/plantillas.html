@@ -61,29 +61,17 @@
 
   <h4>Variables disponibles</h4>
 
-  <div class="variables-list">
-
-    <span (click)="copiar('{{paciente.nombre}}')">
-      {{'{{paciente.nombre}}'}}
-    </span>
-
-    <span (click)="copiar('{{paciente.numeroDocumento}}')">
-      {{'{{paciente.numeroDocumento}}'}}
-    </span>
-
-    <span (click)="copiar('{{medico}}')">
-      {{'{{medico}}'}}
-    </span>
-
-    <span (click)="copiar('{{enfermero}}')">
-      {{'{{enfermero}}'}}
-    </span>
-
-    <span (click)="copiar('{{fecha}}')">
-      {{'{{fecha}}'}}
-    </span>
-
-  </div>
+ <div class="variables-list">
+  <span (click)="copiar('{{paciente.nombre}}')">{{'{{'}}paciente.nombre{{'}}'}}</span>
+  <span (click)="copiar('{{paciente.numeroDocumento}}')">{{'{{'}}paciente.numeroDocumento{{'}}'}}</span>
+  <span (click)="copiar('{{medico}}')">{{'{{'}}medico{{'}}'}}</span>
+  <span (click)="copiar('{{enfermero}}')">{{'{{'}}enfermero{{'}}'}}</span>
+  <span (click)="copiar('{{fecha}}')">{{'{{'}}fecha{{'}}'}}</span>
+  <!-- ✅ Etiquetas tabla -->
+  <span (click)="copiar('[TABLA_SINO]\nItem; x; \nItem; ; x\n[/TABLA_SINO]')">
+    [TABLA_SINO]
+  </span>
+</div>
 
 </div>
 
@@ -121,7 +109,7 @@
 
         <div class="acciones">
           <button mat-button (click)="editarPlantilla(p)">Editar</button>
-          <button mat-button color="warn" (click)="eliminarPlantilla(i)">Eliminar</button>
+          <button mat-button color="warn" (click)="eliminarPlantilla(p.id)">Eliminar</button>
         </div>
 
       </div>

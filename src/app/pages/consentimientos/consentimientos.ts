@@ -43,6 +43,7 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
   buscarConsentimiento = '';
   gruposPlantillas: string[] = [];
   consentimientos: any[] = [];
+  private logoBase64 = '';
 
   consentimiento = {
     medico: '',
@@ -66,12 +67,11 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit() {
-   
     const pacientes = await this.electronService.obtenerPacientes();
     this.paciente = pacientes.find(
-      (p: any) => p.documentopaciente == this.documento
+      (p: any) => p.numeroDocumento == this.documento
     );
-
+    await this.cargarLogo();
     this.medicos = await this.electronService.obtenerMedicos();
     this.enfermeros = await this.electronService.obtenerEnfermeros();
     this.plantillas = await this.electronService.obtenerPlantillas();
@@ -84,21 +84,56 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
         this.documento
       );
     }
+    setTimeout(() => {
+      this.inicializarFirma();
+    }, 100);
+  }
+  async cargarLogo() {
+  try {
+    this.logoBase64 = await this.electronService.cargarLogo('logo.jpg') || '';
+  } catch (error) {
+    console.error('Error cargando logo:', error);
+  }
+}
+//   async cargarLogo() {
+//   try {
+//     const response = await fetch('assets/logo.jpg');
+//     const blob = await response.blob();
+//     const reader = new FileReader();
+//     reader.onload = () => {
+//       this.logoBase64 = reader.result as string;
+//     };
+//     reader.readAsDataURL(blob);
+//   } catch (error) {
+//     console.error('Error cargando logo:', error);
+//   }
+// }
+  inicializarFirma() {
+    if (!this.canvasFirma) return;
+    const canvas = this.canvasFirma.nativeElement;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = 400 * ratio;
+    canvas.height = 200 * ratio;
+    canvas.style.width = '400px';
+    canvas.style.height = '200px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(ratio, ratio);
+    this.signaturePad = new SignaturePad(canvas);
   }
 
   ngAfterViewInit() {
-  if (!this.canvasFirma) return; 
-  
-  const canvas = this.canvasFirma.nativeElement;
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = 400 * ratio;
-  canvas.height = 200 * ratio;
-  canvas.style.width = '400px';
-  canvas.style.height = '200px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(ratio, ratio);
-  this.signaturePad = new SignaturePad(canvas);
-}
+    if (!this.canvasFirma) return;
+
+    const canvas = this.canvasFirma.nativeElement;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = 400 * ratio;
+    canvas.height = 200 * ratio;
+    canvas.style.width = '400px';
+    canvas.style.height = '200px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(ratio, ratio);
+    this.signaturePad = new SignaturePad(canvas);
+  }
 
   private mostrarMensaje(mensaje: string, tipo: 'exito' | 'error' = 'exito') {
     this.snackBar.open(mensaje, 'Cerrar', {
@@ -129,7 +164,82 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     );
     this.consentimiento.plantilla = '';
   }
+ procesarContenido(texto: string): any[] {
+  const bloques: any[] = [];
+  
+  // ✅ Separar por las etiquetas TABLA_SINO
+  const partes = texto.split('[TABLA_SINO]');
 
+  partes.forEach((parte: string) => {
+    if (parte.includes('[/TABLA_SINO]')) {
+      // ✅ Separar la tabla del texto que viene después
+      const [contenidoTabla, restoTexto] = parte.split('[/TABLA_SINO]');
+
+      // Procesar tabla
+      const filas = contenidoTabla
+        .split('\n')
+        .filter((l: string) => l.trim() !== '')
+        .map((linea: string) => {
+          const celdas = linea.split(';').map((p: string) => p.trim());
+          const item = celdas[0] || '';
+          const si = celdas[1]?.toLowerCase() === 'x' ? 'X' : '___';
+          const no = celdas[2]?.toLowerCase() === 'x' ? 'X' : '___';
+          return [
+            { text: item, fontSize: 10, border: [false, false, false, false] },
+            { text: si, fontSize: 10, alignment: 'center', border: [false, false, false, false] },
+            { text: no, fontSize: 10, alignment: 'center', border: [false, false, false, false] },
+          ];
+        });
+
+      bloques.push({
+        marginBottom: 10,
+        marginTop: 5,
+        table: {
+          widths: ['*', 50, 50],
+          body: [
+            [
+              { text: '', border: [false, false, false, false] },
+              { text: 'SI', fontSize: 10, bold: true, alignment: 'center', border: [false, false, false, false] },
+              { text: 'NO', fontSize: 10, bold: true, alignment: 'center', border: [false, false, false, false] },
+            ],
+            ...filas,
+          ],
+        },
+      });
+
+      // ✅ Procesar texto que viene después de la tabla
+      if (restoTexto?.trim()) {
+        restoTexto
+          .split('\n')
+          .filter((p: string) => p.trim() !== '')
+          .forEach((p: string) => {
+            bloques.push({
+              text: p.trim().replace(/\s+/g, ' '),
+              style: 'body',
+              alignment: 'justify',
+              marginBottom: 10,
+            });
+          });
+      }
+
+    } else {
+      // ✅ Texto normal
+      parte
+        .split('\n')
+        .filter((p: string) => p.trim() !== '')
+        .forEach((p: string) => {
+          bloques.push({
+            text: p.trim().replace(/\s+/g, ' '),
+            style: 'body',
+            alignment: 'justify',
+            marginBottom: 10,
+          });
+        });
+    }
+  });
+
+  return bloques;
+}
   async generarConsentimiento() {
     if (!this.signaturePad.isEmpty()) {
       this.firmaGuardada = this.signaturePad.toDataURL();
@@ -138,7 +248,7 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     const medicoSeleccionado = this.medicos.find(
       (m: any) => m.nombre === this.consentimiento.medico,
     );
-
+    
     const enfermeroSeleccionado = this.enfermeros.find(
       (e: any) => e.nombre === this.consentimiento.enfermero,
     );
@@ -182,7 +292,8 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     const fechaPlantilla = plantillaSeleccionada?.fecha || '';
 
     let texto = plantillaSeleccionada?.contenido || '';
-
+      console.log('contenido de la plantilla:', texto);
+      console.log('¿tiene TABLA_SINO?', texto.includes('[TABLA_SINO]'));
     texto = texto
       .replace(/<br\s*\/?>/gi, ' ')
       .replace(/<\/p>/gi, '\n')
@@ -199,127 +310,148 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     texto = texto.replaceAll('{{enfermero}}', this.consentimiento.enfermero);
     texto = texto.replaceAll('{{fecha}}', this.consentimiento.fecha);
 
-    const firmasPaciente = this.firmaGuardada
-      ? [{ image: this.firmaGuardada, width: 80, height: 40 }]
-      : [{ text: '' }];
+   const firmasPaciente = this.firmaGuardada
+  ? [{ image: this.firmaGuardada, width: 80, height: 40 }]
+  : [{ text: '' }];
+    
+const firmasMedico = medicoSeleccionado?.firma
+  ? [{ image: medicoSeleccionado.firma, width: 80, height: 40 }]
+  : [{ text: '' }];
 
-    const firmasMedico = medicoSeleccionado?.firma
-      ? [{ image: medicoSeleccionado.firma, width: 80, height: 40 }]
-      : [{ text: '' }];
+const firmasEnfermero = enfermeroSeleccionado?.firma
+  ? [{ image: enfermeroSeleccionado.firma, width: 80, height: 40 }]
+  : [{ text: '' }];
 
-    const firmasEnfermero = enfermeroSeleccionado?.firma
-      ? [{ image: enfermeroSeleccionado.firma, width: 80, height: 40 }]
-      : [{ text: '' }];
+// ✅ Solo mostrar columna de firma si fue seleccionado
+const columnasMedico = this.consentimiento.medico ? [
+  { width: '*', text: '' },
+  {
+    width: '40%',
+    stack: [
+      ...firmasMedico,
+      { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 150, y2: 5, lineWidth: 1 }] },
+      { text: 'Firma del médico', style: 'firmaLabel' },
+       { text: medicoSeleccionado?.nombre || '', fontSize: 9, marginTop: 2 },
+      { text: `C.C. ${medicoSeleccionado?.cedula || ''}`, fontSize: 9 },
+      { text: `Reg. ${medicoSeleccionado?.registromedico || ''}`, fontSize: 9 },
+    ],
+  },
+] : [];
 
-    const parrafos = texto
-      .split('\n')
-      .filter((p: string) => p.trim() !== '')
-      .map((p: string) => ({
-        text: p.trim().replace(/\s+/g, ' '),
-        style: 'body',
-        alignment: 'justify',
-        marginBottom: 10,
-      }));
+const columnasEnfermero = this.consentimiento.enfermero ? [
+  {
+    width: '40%',
+    stack: [
+      ...firmasEnfermero,
+      { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 150, y2: 5, lineWidth: 1 }] },
+      { text: 'Firma del enfermero', style: 'firmaLabel' },
+      { text: enfermeroSeleccionado?.nombre || '', fontSize: 9, marginTop: 2 },
+      { text: `C.C. ${enfermeroSeleccionado?.documentoenfermero || ''}`, fontSize: 9 },
+    ],
+  },
+] : [];
 
+    console.log('¿tiene TABLA_SINO?', texto.includes('[TABLA_SINO]'));
+    const parrafos = this.procesarContenido(texto);
     const docDefinition: any = {
-      pageMargins: [40, 40, 40, 60],
-      content: [
-        {
-          table: {
-            widths: ['30%', '*', '25%'],
-            body: [
-              [
-                { text: '', border: [true, true, true, true] },
-                {
-                  stack: [
-                    { text: 'DHI COLOMBIA – BARRANQUILLA S.A.S', style: 'headerCenter' },
-                    { text: 'DIRECCIÓN MEDICA', style: 'headerCenter' },
-                    { text: 'CONSENTIMIENTO INFORMADO', style: 'headerCenter' },
-                    { text: plantillaSeleccionada.nombre, style: 'headerCenter' },
-                  ],
-                  border: [true, true, true, true],
-                },
-                {
-                  stack: [
-                    { text: `Código: ${codigo}`, style: 'headerRight' },
-                    { text: `Versión: ${version}`, style: 'headerRight' },
-                    { text: `Fecha: ${fechaPlantilla}`, style: 'headerRight' },
-                    { text: 'Página: 1', style: 'headerRight' },
-                  ],
-                  border: [true, true, true, true],
-                },
-              ],
-            ],
-          },
-          layout: {
-            hLineWidth: () => 1,
-            vLineWidth: () => 1,
-            hLineColor: () => '#000000',
-            vLineColor: () => '#000000',
-          },
-          marginBottom: 16,
-        },
-        ...parrafos,
-        {
-          marginTop: 30,
-          columns: [
+  pageMargins: [40, 40, 40, 60],
+  content: [
+    {
+      table: {
+        widths: ['30%', '*', '25%'],
+        body: [
+          [
             {
-              width: '40%',
-              stack: [
-                ...firmasPaciente,
-                { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 150, y2: 5, lineWidth: 1 }] },
-                { text: 'Firma del paciente', style: 'firmaLabel' },
-              ],
+             
+              stack: this.logoBase64 ? [
+                { image: this.logoBase64, width: 130, height: 60, alignment: 'center' }
+              ] : [{ text: '' }],
+              border: [true, true, true, true],
             },
-            { width: '*', text: '' },
             {
-              width: '40%',
               stack: [
-                ...firmasMedico,
-                { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 150, y2: 5, lineWidth: 1 }] },
-                { text: 'Firma del médico', style: 'firmaLabel' },
+                { text: 'DHI COLOMBIA – BARRANQUILLA S.A.S', style: 'headerCenter' },
+                { text: 'DIRECCIÓN MEDICA', style: 'headerCenter' },
+                { text: 'CONSENTIMIENTO INFORMADO', style: 'headerCenter' },
+                { text: plantillaSeleccionada.nombre, style: 'headerCenter' },
               ],
+              border: [true, true, true, true],
+            },
+            {
+              stack: [
+                { text: `Código: ${codigo}`, style: 'headerRight' },
+                { text: `Versión: ${version}`, style: 'headerRight' },
+                { text: `Fecha: ${fechaPlantilla}`, style: 'headerRight' },
+                { text: 'Página: 1', style: 'headerRight' },
+              ],
+              border: [true, true, true, true],
             },
           ],
-        },
-        {
-          marginTop: 30,
-          columns: [
-            { width: '*', text: '' },
-            {
-              width: '40%',
-              stack: [
-                ...firmasEnfermero,
-                { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 150, y2: 5, lineWidth: 1 }] },
-                { text: 'Firma del enfermero', style: 'firmaLabel' },
-              ],
-            },
-            { width: '*', text: '' },
-          ],
-        },
-      ],
-      styles: {
-        headerCenter: {
-          fontSize: 10,
-          bold: true,
-          alignment: 'center',
-          lineHeight: 1.4,
-        },
-        headerRight: {
-          fontSize: 9,
-          alignment: 'left',
-          lineHeight: 1.4,
-        },
-        body: {
-          fontSize: 11,
-          lineHeight: 1.5,
-        },
-        firmaLabel: {
-          fontSize: 10,
-          marginTop: 4,
-        },
+        ],
       },
-    };
+      layout: {
+        hLineWidth: () => 1,
+        vLineWidth: () => 1,
+        hLineColor: () => '#000000',
+        vLineColor: () => '#000000',
+      },
+      marginBottom: 16,
+    },
+
+    ...parrafos,
+
+    // ✅ Firma paciente + médico (si hay médico)
+    {
+      marginTop: 30,
+      columns: [
+        {
+          width: '40%',
+          stack: [
+            ...firmasPaciente,
+            { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 150, y2: 5, lineWidth: 1 }] },
+            { text: 'Firma del paciente', style: 'firmaLabel' },
+            { text: this.paciente.nombre || '', fontSize: 9, marginTop: 2 },
+            { text: `C.C. ${this.paciente.numeroDocumento || ''}`, fontSize: 9 },
+          ],
+        },
+        
+        ...columnasMedico,
+      ],
+    },
+
+    // ✅ Firma enfermero solo si fue seleccionado
+    ...(columnasEnfermero.length > 0 ? [{
+      marginTop: 30,
+      columns: [
+        { width: '*', text: '' },
+        ...columnasEnfermero,
+        { width: '*', text: '' },
+      ],
+    }] : []),
+  ],
+
+  styles: {
+    headerCenter: {
+      fontSize: 10,
+      bold: true,
+      alignment: 'center',
+      lineHeight: 1.4,
+    },
+    headerRight: {
+      fontSize: 9,
+      alignment: 'left',
+      lineHeight: 1.4,
+    },
+    body: {
+      fontSize: 11,
+      lineHeight: 1.5,
+    },
+    firmaLabel: {
+      fontSize: 10,
+      marginTop: 4,
+    },
+  },
+};
 
     pdfMake.createPdf(docDefinition).download(
       `consentimiento-${this.paciente.documentopaciente}.pdf`

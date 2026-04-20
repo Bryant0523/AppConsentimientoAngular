@@ -26,6 +26,10 @@ export class ElectronService {
   async leerWord(filePath: string): Promise<{ success: boolean; html?: string; error?: string }> {
     return await this.api.leerWord(filePath);
   }
+  //LOGO
+  async cargarLogo(ruta: string): Promise<string | null> {
+  return await this.api.cargarLogo(ruta);
+}
 
   // ========================
   // PACIENTES

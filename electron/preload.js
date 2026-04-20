@@ -6,7 +6,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // ========================
   leerWord: (filePath) => ipcRenderer.invoke('leer-word', filePath),
   seleccionarArchivo: () => ipcRenderer.invoke('seleccionar-archivo'),
-
+  //LOGO
+  cargarLogo: (ruta) => ipcRenderer.invoke('cargar-logo', ruta),
   // ========================
   // PACIENTES
   // ========================
