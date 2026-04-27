@@ -1,35 +1,22 @@
-<h2>Pacientes</h2>
-
-<mat-card class="card">
-  <h3>Buscar paciente</h3>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Buscar</mat-label>
-    <input matInput placeholder="Nombre o documento" [(ngModel)]="buscar">
-  </mat-form-field>
-
-  <br>
-
+<div class="page-header">
+  <h2>Pacientes</h2>
   <button mat-raised-button color="primary" (click)="mostrarFormulario = !mostrarFormulario">
-    {{ mostrarFormulario ? 'Cerrar formulario' : 'Crear paciente' }}
+    {{ mostrarFormulario ? '✕ Cerrar' : '+ Nuevo paciente' }}
   </button>
-</mat-card>
-
-<br>
+</div>
 
 @if (mostrarFormulario) {
-<mat-card class="card">
+<mat-card class="card" style="margin-bottom: 20px;">
   <h3>{{ idEditando !== null ? 'Editar paciente' : 'Nuevo paciente' }}</h3>
-
   <div class="form-grid">
     <mat-form-field appearance="outline">
-      <mat-label>Nombre</mat-label>
-      <input matInput [(ngModel)]="paciente.nombre" name="nombre">
+      <mat-label>Nombre completo</mat-label>
+      <input matInput [(ngModel)]="paciente.nombre">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Tipo de documento</mat-label>
-      <mat-select [(ngModel)]="paciente.tipoDocumento" name="tipoDocumento">
+      <mat-select [(ngModel)]="paciente.tipoDocumento">
         <mat-option value="">Seleccione</mat-option>
         <mat-option value="CC">CC</mat-option>
         <mat-option value="TI">TI</mat-option>
@@ -40,63 +27,57 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Número de documento</mat-label>
-      <input matInput [(ngModel)]="paciente.numeroDocumento" name="numeroDocumento">
+      <input matInput [(ngModel)]="paciente.numeroDocumento">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Lugar de expedición</mat-label>
-      <input matInput [(ngModel)]="paciente.lugarExpedicion" name="lugarExpedicion">
+      <input matInput [(ngModel)]="paciente.lugarExpedicion">
     </mat-form-field>
   </div>
 
   <br>
-
   <button mat-raised-button color="primary" (click)="guardarPaciente()">
-    {{ idEditando !== null ? 'Actualizar' : 'Guardar' }}
+    {{ idEditando !== null ? 'Actualizar paciente' : 'Guardar paciente' }}
   </button>
-
 </mat-card>
 }
-@if (cargando) {
-  <p>Cargando...</p>
-} @else if (pacientes.length === 0) {
-  <p>No hay pacientes registrados</p>
-} @else {
-  @for (p of pacientes; track p.id) {
-    <!-- tu lista -->
-  }
-}
-<br>
 
 <mat-card class="card">
-  <h3>Pacientes registrados</h3>
+  <div class="search-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar paciente</mat-label>
+      <input matInput placeholder="Nombre o documento" [(ngModel)]="buscar">
+    </mat-form-field>
+  </div>
 
   <div class="lista">
-    @for (p of pacientes; track p.id) {
-      @if(
-        p.nombre.toLowerCase().includes(buscar.toLowerCase()) ||
-        p.numeroDocumento.toString().includes(buscar)
-      ) {
-        <div class="item">
-          <div>
-            <b>{{p.nombre}}</b><br>
-            <small>{{p.tipoDocumento}} {{p.numeroDocumento}}</small>
+    @if (cargando) {
+      <div class="cargando">Cargando pacientes...</div>
+    } @else if (pacientes.length === 0) {
+      <div class="empty-state">
+        <p>No hay pacientes registrados aún.</p>
+      </div>
+    } @else {
+      @for (p of pacientes; track p.id) {
+        @if(
+          p.nombre.toLowerCase().includes(buscar.toLowerCase()) ||
+          p.numeroDocumento.toString().includes(buscar)
+        ) {
+          <div class="item">
+            <div class="item-info">
+              <b>{{ p.nombre }}</b>
+              <small>{{ p.tipoDocumento }} · {{ p.numeroDocumento }} · {{ p.lugarExpedicion }}</small>
+            </div>
+            <div class="acciones">
+              <button mat-button color="primary" (click)="crearConsentimiento(p.numeroDocumento)">
+                Consentimiento
+              </button>
+              <button mat-button (click)="editarPaciente(p)">Editar</button>
+              <button mat-button color="warn" (click)="eliminarPaciente(p.id)">Eliminar</button>
+            </div>
           </div>
-
-          <div class="acciones">
-            <button mat-button color="primary" (click)="crearConsentimiento(p.numeroDocumento)">
-              Consentimiento
-            </button>
-
-            <button mat-button color="accent" (click)="editarPaciente(p)">
-               Editar
-            </button>
-
-            <button mat-button color="warn" (click)="eliminarPaciente(p.id)">
-              Eliminar
-            </button>
-          </div>
-        </div>
+        }
       }
     }
   </div>

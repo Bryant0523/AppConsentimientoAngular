@@ -48,6 +48,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
     eliminar: (id) => ipcRenderer.invoke('plantillas:eliminar', id),
   },
 
+
+grupos: {
+  obtener: () => ipcRenderer.invoke('grupos:obtener'),
+  crear: (nombre) => ipcRenderer.invoke('grupos:crear', nombre),
+  eliminar: (id) => ipcRenderer.invoke('grupos:eliminar', id),
+},
+
+historial: {
+  obtener: () => ipcRenderer.invoke('historial:obtener'),
+  limpiarAntiguos: () => ipcRenderer.invoke('historial:limpiar-antiguos'),
+},
   // ========================
   // CONSENTIMIENTOS
   // ========================

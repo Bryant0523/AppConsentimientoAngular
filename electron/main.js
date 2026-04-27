@@ -26,7 +26,12 @@ function createWindow() {
 }
 
 
-
+db.exec(`
+  CREATE TABLE IF NOT EXISTS grupos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL UNIQUE
+  );
+`);
 
 // ========================
 // WORD
@@ -50,7 +55,17 @@ ipcMain.handle('cargar-logo', (_event, rutaRelativa) => {
     return null;
   }
 });
+ipcMain.handle('grupos:obtener', () => {
+  return db.prepare('SELECT * FROM grupos ORDER BY nombre').all();
+});
 
+ipcMain.handle('grupos:crear', (_event, nombre) => {
+  return db.prepare('INSERT INTO grupos (nombre) VALUES (?)').run(nombre);
+});
+
+ipcMain.handle('grupos:eliminar', (_event, id) => {
+  return db.prepare('DELETE FROM grupos WHERE id = ?').run(id);
+});
 ipcMain.handle('seleccionar-archivo', async () => {
   const resultado = await dialog.showOpenDialog({
     filters: [{ name: 'Word', extensions: ['docx'] }],
@@ -244,6 +259,30 @@ ipcMain.handle('consentimientos:crear', (_event, consentimiento) => {
 
 ipcMain.handle('consentimientos:eliminar', (_event, id) => {
   return db.prepare('DELETE FROM consentimientos WHERE id = ?').run(id);
+});
+
+ipcMain.handle('historial:obtener', () => {
+  return db.prepare(`
+    SELECT c.*, 
+           p.nombre as nombrePaciente, p.numeroDocumento, p.tipoDocumento,
+           m.nombre as nombreMedico,
+           e.nombre as nombreEnfermero,
+           pl.nombre as nombrePlantilla, pl.codigo, pl.version, 
+           pl.fecha as fechaPlantilla, pl.contenido
+    FROM consentimientos c
+    JOIN pacientes p ON c.pacienteId = p.id
+    LEFT JOIN medicos m ON c.medicoId = m.id
+    LEFT JOIN enfermeros e ON c.enfermeroId = e.id
+    JOIN plantillas pl ON c.plantillaId = pl.id
+    ORDER BY c.id DESC
+  `).all();
+});
+
+ipcMain.handle('historial:limpiar-antiguos', () => {
+  const fechaLimite = new Date();
+  fechaLimite.setDate(fechaLimite.getDate() - 7);
+  const fechaStr = fechaLimite.toISOString().split('T')[0];
+  return db.prepare('DELETE FROM consentimientos WHERE fecha < ?').run(fechaStr);
 });
 
 

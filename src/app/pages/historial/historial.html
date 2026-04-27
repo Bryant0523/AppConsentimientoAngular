@@ -1,0 +1,40 @@
+<div class="page-header">
+  <h2>Historial de consentimientos</h2>
+</div>
+
+<mat-card class="card">
+  <div class="search-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar por paciente, documento o plantilla</mat-label>
+      <input matInput [(ngModel)]="buscar">
+    </mat-form-field>
+  </div>
+
+  <div class="lista">
+    @if (cargando) {
+      <div class="cargando">Cargando historial...</div>
+    } @else if (consentimientosFiltrados.length === 0) {
+      <div class="empty-state">
+        <p>No hay consentimientos registrados.</p>
+      </div>
+    } @else {
+      @for (c of consentimientosFiltrados; track c.id) {
+        <div class="item">
+          <div class="item-info">
+            <b>{{ c.nombrePaciente }}</b>
+            <small>
+              {{ c.tipoDocumento }} {{ c.numeroDocumento }} ·
+              {{ c.nombrePlantilla }} ·
+              {{ c.fecha }} ·
+              {{ c.nombreMedico || 'Sin médico' }}
+            </small>
+          </div>
+          <div class="acciones">
+            <button mat-button color="primary" (click)="verPDF(c)">Ver PDF</button>
+            <button mat-button color="warn" (click)="eliminarConsentimiento(c.id)">Eliminar</button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</mat-card>

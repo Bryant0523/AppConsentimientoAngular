@@ -30,10 +30,15 @@
       <input matInput [(ngModel)]="nuevaPlantilla.nombre">
     </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Grupo</mat-label>
-      <input matInput [(ngModel)]="nuevaPlantilla.grupo">
-    </mat-form-field>
+ <mat-form-field appearance="outline">
+  <mat-label>Grupo</mat-label>
+  <mat-select [(ngModel)]="nuevaPlantilla.grupo">
+    <mat-option value="">Seleccione</mat-option>
+    @for (g of grupos; track g.id) {
+      <mat-option [value]="g.nombre">{{ g.nombre }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
 
     <mat-form-field>
       <mat-label>Código</mat-label>

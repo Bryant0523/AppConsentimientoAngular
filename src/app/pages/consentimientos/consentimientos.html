@@ -1,87 +1,133 @@
-<h2>Consentimiento</h2>
+<div class="page-header">
+  <h2>{{ paciente?.nombre || 'Consentimiento' }}</h2>
+  @if (paciente) {
+    <small style="color: var(--text-muted); font-size: 13px;">
+      {{ paciente.tipoDocumento }} · {{ paciente.numeroDocumento }}
+    </small>
+  }
+</div>
 
 @if (paciente) {
-<!-- FIRMA -->
-<mat-card class="card firma-card">
-  <h3>Firma del paciente</h3>
 
-  <div class="firma-container">
-    <canvas #canvasFirma class="firma"></canvas>
-  </div>
-
-  <div class="botones-firma">
-    <button mat-raised-button color="warn" (click)="limpiarFirma()">Limpiar</button>
-
-    <button mat-raised-button color="primary" (click)="guardarFirma()">Guardar firma</button>
-  </div>
-
-  @if (firmaGuardada) {
-  <h4>Firma guardada</h4>
-
-  <div class="firma-container">
-    <img [src]="firmaGuardada" width="200" />
-  </div>
-  }
-</mat-card>
-
-<br />
-
-<!-- DATOS -->
-<mat-card class="card">
-  <h3>Datos del consentimiento</h3>
-
-  <div class="form-grid">
-    <mat-form-field appearance="outline">
-      <mat-label>Médico</mat-label>
-      <mat-select [(ngModel)]="consentimiento.medico">
-        <mat-option value="">Seleccione</mat-option>
-        @for (m of medicos; track m) {
-        <mat-option [value]="m.nombre">{{ m.nombre }}</mat-option>
+  <!-- LISTA CONSENTIMIENTOS -->
+  <!-- @if (consentimientos.length > 0) {
+    <mat-card class="card" style="margin-bottom: 16px;">
+      <h3>Consentimientos registrados</h3>
+      <div class="lista">
+        @for (c of consentimientos; track c.id) {
+          <div class="item">
+            <div class="item-info">
+              <b>{{ c.nombrePlantilla }}</b>
+              <small>{{ c.fecha }} · {{ c.nombreMedico || 'Sin médico' }} · {{ c.nombreEnfermero || 'Sin enfermero' }}</small>
+            </div>
+            <div class="acciones">
+              <button mat-button color="primary" (click)="verConsentimiento(c)">Ver PDF</button>
+              <button mat-button color="warn" (click)="eliminarConsentimiento(c.id)">Eliminar</button>
+            </div>
+          </div>
         }
-      </mat-select>
-    </mat-form-field>
+      </div>
+    </mat-card>
+  } -->
 
-    <mat-form-field appearance="outline">
-      <mat-label>Enfermero</mat-label>
-      <mat-select [(ngModel)]="consentimiento.enfermero">
-        <mat-option value="">Seleccione</mat-option>
-        @for (e of enfermeros; track e) {
-        <mat-option [value]="e.nombre">{{ e.nombre }}</mat-option>
+  <!-- FIRMA + DATOS EN UNA CARD -->
+  <mat-card class="card">
+    <h3>Nuevo consentimiento</h3>
+
+    <!-- FIRMA Y PREVIEW LADO A LADO -->
+    <div class="firma-row">
+      <div class="firma-side">
+        <p class="form-section-label">Firma del paciente</p>
+        <div class="firma-wrapper">
+          <canvas #canvasFirma class="firma"></canvas>
+          @if (!firmaGuardada) {
+            <span class="firma-hint">Firme aquí</span>
+          }
+        </div>
+        <div class="botones-firma">
+          <button mat-raised-button color="warn" (click)="limpiarFirma()">Limpiar</button>
+          <button mat-raised-button color="primary" (click)="guardarFirma()">Guardar firma</button>
+        </div>
+      </div>
+
+      @if (firmaGuardada) {
+        <div class="preview-side">
+          <h4>Firma guardada ✓</h4>
+          <img [src]="firmaGuardada" class="preview-firma" />
+        </div>
+      }
+    </div>
+
+    <br>
+
+    <!-- MÉDICO Y ENFERMERO -->
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Médico</mat-label>
+        <mat-select [(ngModel)]="consentimiento.medico">
+          <mat-option value="">Seleccione</mat-option>
+          @for (m of medicos; track m.id) {
+            <mat-option [value]="m.nombre">{{ m.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Enfermero</mat-label>
+        <mat-select [(ngModel)]="consentimiento.enfermero">
+          <mat-option value="">Seleccione</mat-option>
+          @for (e of enfermeros; track e.id) {
+            <mat-option [value]="e.nombre">{{ e.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput type="date" [(ngModel)]="consentimiento.fecha">
+      </mat-form-field>
+    </div>
+
+    <br>
+
+    <!-- GRUPOS COMO PILLS -->
+    <p class="form-section-label">Grupo de plantilla</p>
+    <div class="grupos-list">
+      @for (g of gruposPlantillas; track g) {
+        <button
+          class="grupo-btn"
+          [class.activo]="consentimiento.grupoPlantilla === g"
+          (click)="seleccionarGrupo(g)">
+          {{ g }}
+        </button>
+      }
+    </div>
+
+    <!-- PLANTILLAS COMO BOTONES -->
+    @if (plantillasFiltradas.length > 0) {
+      <p class="form-section-label">Plantilla</p>
+      <div class="plantillas-list">
+        @for (p of plantillasFiltradas; track p.id) {
+          <button
+            class="plantilla-btn"
+            [class.activo]="consentimiento.plantilla === p.nombre"
+            (click)="consentimiento.plantilla = p.nombre">
+            {{ p.nombre }}
+          </button>
         }
-      </mat-select>
-    </mat-form-field>
+      </div>
+    }
 
+    <br>
+    <button mat-raised-button color="primary" (click)="generarConsentimiento()">
+      Generar PDF
+    </button>
+  </mat-card>
 
-
-
-    <mat-form-field appearance="outline">
-      <mat-label>Fecha</mat-label>
-      <input matInput type="date" [(ngModel)]="consentimiento.fecha">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Grupo</mat-label>
-      <mat-select [(ngModel)]="consentimiento.grupoPlantilla" (selectionChange)="filtrarPlantillas()">
-        <mat-option value="">Seleccionar</mat-option>
-        @for (g of gruposPlantillas; track g) {
-        <mat-option [value]="g">{{ g }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Plantilla</mat-label>
-      <mat-select [(ngModel)]="consentimiento.plantilla">
-        <mat-option value="">Seleccionar</mat-option>
-        @for (p of plantillasFiltradas; track p) {
-        <mat-option [value]="p.nombre">{{ p.nombre }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <br />
-
-  <button mat-raised-button color="primary" (click)="generarConsentimiento()">Generar PDF</button>
-</mat-card>
+} @else {
+  <mat-card class="card">
+    <div class="empty-state">
+      <p>Paciente no encontrado.</p>
+    </div>
+  </mat-card>
 }

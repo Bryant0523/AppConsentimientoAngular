@@ -1,31 +1,103 @@
-/* GRID FORMULARIO */
-.form-grid{
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-bar mat-form-field {
+  width: 300px;
+  margin: 0;
+}
+
+.form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  gap: 8px 20px;
 }
 
-mat-form-field{
-  width: 100%;
-}
-
-/* LISTA */
-.lista{
+.lista {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
-.item{
+.item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-radius: 8px;
-  background: #f5f5f5;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
 }
 
-.acciones{
+.item:hover {
+  background: var(--teal-light);
+  border-color: var(--teal);
+  transform: translateX(2px);
+}
+
+.item-info b {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+}
+
+.item-info small {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+  display: block;
+}
+
+.acciones {
   display: flex;
-  gap: 10px;
+  gap: 4px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state p {
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+.cargando {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.search-bar mat-form-field {
+  width: 280px;
+  margin: 0;
 }

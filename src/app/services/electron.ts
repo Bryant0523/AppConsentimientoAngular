@@ -36,9 +36,8 @@ export class ElectronService {
   // ========================
   async obtenerPacientes(): Promise<any[]> {
   try {
-    console.log('llamando pacientes.obtener...');
+   
     const resultado = await this.api.pacientes.obtener();
-    console.log('resultado:', resultado);
     return resultado;
   } catch (error) {
     console.error('error en obtenerPacientes:', error);
@@ -115,6 +114,25 @@ export class ElectronService {
     return await this.api.plantillas.eliminar(id);
   }
 
+async obtenerGrupos(): Promise<any[]> {
+  return await this.api.grupos.obtener();
+}
+
+async crearGrupo(nombre: string): Promise<any> {
+  return await this.api.grupos.crear(nombre);
+}
+
+async eliminarGrupo(id: number): Promise<any> {
+  return await this.api.grupos.eliminar(id);
+}
+
+async obtenerHistorial(): Promise<any[]> {
+  return await this.api.historial.obtener();
+}
+
+async limpiarHistorialAntiguos(): Promise<any> {
+  return await this.api.historial.limpiarAntiguos();
+}
   // ========================
   // CONSENTIMIENTOS
   // ========================

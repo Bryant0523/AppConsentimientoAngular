@@ -1,0 +1,8 @@
+.search-bar {
+  margin-bottom: 16px;
+}
+
+.search-bar mat-form-field {
+  width: 360px;
+  margin: 0;
+}

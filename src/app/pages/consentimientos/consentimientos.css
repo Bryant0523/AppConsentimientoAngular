@@ -1,44 +1,160 @@
-/* CARDS */
-.card{
-  padding: 20px;
-  border-radius: 12px;
+mat-form-field { width: 100%; }
+
+input[type="date"] {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
 }
 
-/* FIRMA */
-.firma-card{
-  text-align: center;
-}
-
-.firma-container{
+/* ====== LAYOUT FIRMA + PREVIEW ====== */
+.firma-row {
   display: flex;
-  justify-content: center;
-  margin: 10px 0;
+  gap: 20px;
+  align-items: flex-start;
 }
 
-.firma{
-  width: 350px;
-  height: 180px;
-  border: 2px dashed #ccc;
+.firma-side {
+  flex: 1;
+}
+
+.preview-side {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-side h4 {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin: 0;
+}
+
+.preview-firma {
+  width: 160px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: 4px;
+}
+
+/* ====== CANVAS ====== */
+.firma-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.firma {
+  width: 380px;
+  height: 160px;
+  border: 2px solid var(--teal);
   border-radius: 10px;
-  background: white;
+  background: #ffffff;
+  display: block;
+  cursor: crosshair;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.06);
 }
 
-/* BOTONES FIRMA */
-.botones-firma{
+.firma-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #c5d5d8;
+  font-size: 13px;
+  pointer-events: none;
+  font-style: italic;
+}
+
+.botones-firma {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  gap: 8px;
   margin-top: 10px;
 }
 
-/* FORMULARIO GRID */
-.form-grid{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+/* ====== GRUPOS COMO BOTONES ====== */
+.grupos-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
-/* IMPORTANTE: quitar ancho fijo */
-mat-form-field{
-  width: 100%;
+.grupo-btn {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.grupo-btn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: var(--teal-light);
+}
+
+.grupo-btn.activo {
+  background: var(--teal);
+  color: white;
+  border-color: var(--teal);
+}
+
+/* ====== PLANTILLAS COMO BOTONES ====== */
+.plantillas-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.plantilla-btn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.plantilla-btn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: var(--teal-light);
+}
+
+.plantilla-btn.activo {
+  background: var(--teal-light);
+  color: var(--teal);
+  border-color: var(--teal);
+  font-weight: 600;
+}
+
+/* ====== FORM GRID ====== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 16px;
+}
+
+.form-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  margin-top: 4px;
 }

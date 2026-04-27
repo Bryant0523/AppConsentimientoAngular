@@ -12,11 +12,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ElectronService } from '../../services/electron';
+import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+
 
 (pdfMake as any).vfs = (pdfFonts as any).pdfMake?.vfs ?? pdfFonts;
 
 @Component({
   selector: 'app-consentimientos',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -26,6 +29,7 @@ import { ElectronService } from '../../services/electron';
     MatCardModule,
     MatDatepickerModule,
     MatSnackBarModule,
+    
   ],
   templateUrl: './consentimientos.html',
   styleUrl: './consentimientos.css',
@@ -48,7 +52,7 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
   consentimiento = {
     medico: '',
     enfermero: '',
-    fecha: '',
+    fecha: new Date().toISOString().split('T')[0],
     grupoPlantilla: '',
     plantilla: '',
   };
@@ -59,6 +63,7 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     private route: ActivatedRoute,
     private electronService: ElectronService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {
     const doc = this.route.snapshot.params['documento'];
     if (doc) {
@@ -76,8 +81,8 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     this.enfermeros = await this.electronService.obtenerEnfermeros();
     this.plantillas = await this.electronService.obtenerPlantillas();
 
-    const grupos = this.plantillas.map((p: any) => p.grupo);
-    this.gruposPlantillas = [...new Set(grupos)] as string[];
+    const grupos = await this.electronService.obtenerGrupos();
+    this.gruposPlantillas = grupos.map((g: any) => g.nombre);
 
     if (this.documento) {
       this.consentimientos = await this.electronService.obtenerConsentimientos(
@@ -87,6 +92,8 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     setTimeout(() => {
       this.inicializarFirma();
     }, 100);
+    this.cdr.markForCheck();
+
   }
   async cargarLogo() {
   try {
@@ -95,19 +102,7 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     console.error('Error cargando logo:', error);
   }
 }
-//   async cargarLogo() {
-//   try {
-//     const response = await fetch('assets/logo.jpg');
-//     const blob = await response.blob();
-//     const reader = new FileReader();
-//     reader.onload = () => {
-//       this.logoBase64 = reader.result as string;
-//     };
-//     reader.readAsDataURL(blob);
-//   } catch (error) {
-//     console.error('Error cargando logo:', error);
-//   }
-// }
+
   inicializarFirma() {
     if (!this.canvasFirma) return;
     const canvas = this.canvasFirma.nativeElement;
@@ -158,12 +153,13 @@ export class ConsentimientosComponent implements AfterViewInit, OnInit {
     this.mostrarMensaje('✅ Firma guardada');
   }
 
-  filtrarPlantillas() {
-    this.plantillasFiltradas = this.plantillas.filter(
-      (p: any) => p.grupo === this.consentimiento.grupoPlantilla,
-    );
-    this.consentimiento.plantilla = '';
-  }
+  seleccionarGrupo(grupo: string) {
+  this.consentimiento.grupoPlantilla = grupo;
+  this.plantillasFiltradas = this.plantillas.filter(
+    (p: any) => p.grupo === grupo
+  );
+  this.consentimiento.plantilla = '';
+}
  procesarContenido(texto: string): any[] {
   const bloques: any[] = [];
   

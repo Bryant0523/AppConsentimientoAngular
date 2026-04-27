@@ -44,7 +44,11 @@ db.exec(`
     fecha TEXT,
     contenido TEXT
   );
-
+  
+  CREATE TABLE IF NOT EXISTS grupos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre TEXT NOT NULL UNIQUE
+  );
   CREATE TABLE IF NOT EXISTS consentimientos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     pacienteId INTEGER,

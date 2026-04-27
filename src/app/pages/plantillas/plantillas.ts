@@ -30,6 +30,7 @@ export class PlantillasComponent implements OnInit {
   idEditando: number | null = null;
   buscarPlantilla = '';
   cargando = true;
+  grupos: any[] = [];
 
   nuevaPlantilla = {
     nombre: '',
@@ -47,16 +48,17 @@ export class PlantillasComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.cargando = true;
-    try {
-      this.plantillas = await this.electronService.obtenerPlantillas();
-      this.cargando = false;
-      this.cdr.markForCheck();
-    } catch (error) {
-      console.error('Error:', error);
-      this.cargando = false;
-    }
+  this.cargando = true;
+  try {
+    this.plantillas = await this.electronService.obtenerPlantillas();
+    this.grupos = await this.electronService.obtenerGrupos();
+    this.cargando = false;
+    this.cdr.markForCheck();
+  } catch (error) {
+    console.error('Error:', error);
+    this.cargando = false;
   }
+}
 
   async cargarPlantillas() {
     this.plantillas = await this.electronService.obtenerPlantillas();
@@ -147,19 +149,18 @@ export class PlantillasComponent implements OnInit {
   .replace(/<\/li>/gi, '')
   .replace(/<ul>/gi, '\n')
   .replace(/<\/ul>/gi, '\n')
-  .replace(/<strong>/gi, '\n')
-  .replace(/<\/strong>/gi, '\n')
+  // ✅ Preservar negritas con etiqueta especial
+  .replace(/<strong>(.*?)<\/strong>/gi, '[B]$1[/B]')
+  .replace(/<b>(.*?)<\/b>/gi, '[B]$1[/B]')
   .replace(/<p><br><\/p>/gi, '\n\n')
   .replace(/<p><\/p>/gi, '\n\n')
   .replace(/<\/p>\s*<p>/gi, ' ')
-  .replace(/(\d+\.)\s*<br\s*\/?>\s*/gi, '$1 ') 
+  .replace(/(\d+\.)\s*<br\s*\/?>\s*/gi, '$1 ')
   .replace(/<br\s*\/?>/gi, '\n')
   .replace(/<[^>]*>/g, '')
   .replace(/&nbsp;/g, ' ')
   .replace(/[ \t]+/g, ' ')
   .replace(/(?<!\d)\.\s+([A-ZÁÉÍÓÚÑ])/g, '.\n\n$1')
-  .replace(/\[\d+\][^\n]*/g, '')
-  .replace(/^.*↑.*$/gm, '')
   .replace(/\n{3,}/g, '\n\n')
   .trim();
     this.nuevaPlantilla.contenido = html;
