@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatIconModule} from '@angular/material/icon'
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ElectronService } from '../../services/electron';
@@ -20,6 +22,7 @@ import { ElectronService } from '../../services/electron';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatIconModule,
   ],
   templateUrl: './ajustes.html',
 })

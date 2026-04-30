@@ -3,7 +3,7 @@
 </div>
 
 @if(!autorizado){
-<mat-card class="card" style="max-width: 360px;">
+<mat-card class="login-card">
   <h3>Acceso administrador</h3>
 
   <mat-form-field appearance="outline">
@@ -11,38 +11,50 @@
     <input matInput type="password" [(ngModel)]="password" (keyup.enter)="validar()">
   </mat-form-field>
 
-  <br>
-  <button mat-raised-button color="primary" (click)="validar()">Entrar</button>
+  <button mat-raised-button color="primary" (click)="validar()">
+    Entrar
+  </button>
 </mat-card>
 }
 
 @if(autorizado){
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+<div class="admin-grid">
 
-  <!-- NAVEGACION -->
+  <!-- ADMIN -->
   <mat-card class="card">
     <h3>Administración</h3>
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      <button mat-raised-button color="primary" routerLink="/medicos">👨‍⚕️ Médicos</button>
-      <button mat-raised-button color="primary" routerLink="/enfermeros">🧑‍⚕️ Enfermeros</button>
-      <button mat-raised-button color="primary" routerLink="/plantillas">📄 Plantillas</button>
+
+    <div class="menu">
+      <button mat-stroked-button color="primary" routerLink="/medicos">
+        👨‍⚕️ Médicos
+      </button>
+
+      <button mat-stroked-button color="primary" routerLink="/enfermeros">
+        🧑‍⚕️ Enfermeros
+      </button>
+
+      <button mat-stroked-button color="primary" routerLink="/plantillas">
+        📄 Plantillas
+      </button>
     </div>
-    <br>
-    <button mat-raised-button color="warn" (click)="logout()">Cerrar sesión</button>
+
+    <button class="logout" mat-button color="warn" (click)="logout()">
+      Cerrar sesión
+    </button>
   </mat-card>
 
   <!-- GRUPOS -->
   <mat-card class="card">
     <h3>Grupos de plantillas</h3>
 
-    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-      <mat-form-field appearance="outline" style="flex: 1; margin: 0;">
+    <div class="grupo-form">
+      <mat-form-field appearance="outline">
         <mat-label>Nuevo grupo</mat-label>
         <input matInput [(ngModel)]="nuevoGrupo" (keyup.enter)="agregarGrupo()">
       </mat-form-field>
-      <button mat-raised-button color="primary" (click)="agregarGrupo()"
-        style="height: 56px; margin-top: 0;">
+
+      <button mat-raised-button color="primary" (click)="agregarGrupo()">
         Agregar
       </button>
     </div>
@@ -53,12 +65,16 @@
       } @else {
         @for (g of grupos; track g.id) {
           <div class="item">
-            <span style="font-weight: 500;">{{ g.nombre }}</span>
-            <button mat-button color="warn" (click)="eliminarGrupo(g.id)">Eliminar</button>
+            <span class="nombre">{{ g.nombre }}</span>
+
+            <button mat-icon-button color="warn" (click)="eliminarGrupo(g.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
           </div>
         }
       }
     </div>
+
   </mat-card>
 
 </div>

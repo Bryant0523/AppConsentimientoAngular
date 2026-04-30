@@ -9,32 +9,21 @@
 
 @if (paciente) {
 
-  <!-- LISTA CONSENTIMIENTOS -->
-  <!-- @if (consentimientos.length > 0) {
-    <mat-card class="card" style="margin-bottom: 16px;">
-      <h3>Consentimientos registrados</h3>
-      <div class="lista">
-        @for (c of consentimientos; track c.id) {
-          <div class="item">
-            <div class="item-info">
-              <b>{{ c.nombrePlantilla }}</b>
-              <small>{{ c.fecha }} · {{ c.nombreMedico || 'Sin médico' }} · {{ c.nombreEnfermero || 'Sin enfermero' }}</small>
-            </div>
-            <div class="acciones">
-              <button mat-button color="primary" (click)="verConsentimiento(c)">Ver PDF</button>
-              <button mat-button color="warn" (click)="eliminarConsentimiento(c.id)">Eliminar</button>
-            </div>
-          </div>
-        }
-      </div>
-    </mat-card>
-  } -->
-
-  <!-- FIRMA + DATOS EN UNA CARD -->
   <mat-card class="card">
     <h3>Nuevo consentimiento</h3>
 
-    <!-- FIRMA Y PREVIEW LADO A LADO -->
+    <!-- ======================== -->
+    <!-- CHECKBOX MENOR DE EDAD  -->
+    <!-- ======================== -->
+    <div class="menor-check">
+      <mat-checkbox [(ngModel)]="esMenor" (change)="onEsMenorChange()">
+        Paciente menor de edad
+      </mat-checkbox>
+    </div>
+
+    <!-- ======================== -->
+    <!-- FIRMA PACIENTE           -->
+    <!-- ======================== -->
     <div class="firma-row">
       <div class="firma-side">
         <p class="form-section-label">Firma del paciente</p>
@@ -58,9 +47,69 @@
       }
     </div>
 
+    <!-- ======================== -->
+    <!-- SECCIÓN ACUDIENTE        -->
+    <!-- (solo si es menor)       -->
+    <!-- ======================== -->
+    @if (esMenor) {
+      <div class="seccion-acudiente">
+        <h4 class="acudiente-titulo">Datos del acudiente / representante legal</h4>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre completo del acudiente</mat-label>
+            <input matInput [(ngModel)]="acudiente.nombre" placeholder="Nombre del acudiente">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Documento del acudiente</mat-label>
+            <input matInput [(ngModel)]="acudiente.documento" placeholder="Número de documento">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Parentesco</mat-label>
+            <mat-select [(ngModel)]="acudiente.parentesco">
+              <mat-option value="Padre">Padre</mat-option>
+              <mat-option value="Madre">Madre</mat-option>
+              <mat-option value="Tutor legal">Tutor legal</mat-option>
+              <mat-option value="Abuelo/a">Abuelo/a</mat-option>
+              <mat-option value="Hermano/a mayor">Hermano/a mayor</mat-option>
+              <mat-option value="Otro">Otro</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Firma del acudiente -->
+        <div class="firma-row">
+          <div class="firma-side">
+            <p class="form-section-label">Firma del acudiente</p>
+            <div class="firma-wrapper">
+              <canvas #canvasFirmaAcudiente class="firma"></canvas>
+              @if (!firmaAcudienteGuardada) {
+                <span class="firma-hint">Firme aquí</span>
+              }
+            </div>
+            <div class="botones-firma">
+              <button mat-raised-button color="warn" (click)="limpiarFirmaAcudiente()">Limpiar</button>
+              <button mat-raised-button color="primary" (click)="guardarFirmaAcudiente()">Guardar firma</button>
+            </div>
+          </div>
+
+          @if (firmaAcudienteGuardada) {
+            <div class="preview-side">
+              <h4>Firma del acudiente guardada ✓</h4>
+              <img [src]="firmaAcudienteGuardada" class="preview-firma" />
+            </div>
+          }
+        </div>
+      </div>
+    }
+
     <br>
 
-    <!-- MÉDICO Y ENFERMERO -->
+    <!-- ======================== -->
+    <!-- MÉDICO Y ENFERMERO       -->
+    <!-- ======================== -->
     <div class="form-grid">
       <mat-form-field appearance="outline">
         <mat-label>Médico</mat-label>
@@ -90,7 +139,9 @@
 
     <br>
 
-    <!-- GRUPOS COMO PILLS -->
+    <!-- ======================== -->
+    <!-- GRUPOS COMO PILLS        -->
+    <!-- ======================== -->
     <p class="form-section-label">Grupo de plantilla</p>
     <div class="grupos-list">
       @for (g of gruposPlantillas; track g) {
@@ -103,7 +154,9 @@
       }
     </div>
 
-    <!-- PLANTILLAS COMO BOTONES -->
+    <!-- ======================== -->
+    <!-- PLANTILLAS COMO BOTONES  -->
+    <!-- ======================== -->
     @if (plantillasFiltradas.length > 0) {
       <p class="form-section-label">Plantilla</p>
       <div class="plantillas-list">
@@ -123,6 +176,30 @@
       Generar PDF
     </button>
   </mat-card>
+
+  <!-- ======================== -->
+  <!-- HISTORIAL DE CONSENTIMIENTOS -->
+  <!-- ======================== -->
+  @if (consentimientos.length > 0) {
+    <mat-card class="card" style="margin-top: 24px;">
+      <h3>Consentimientos firmados</h3>
+      @for (c of consentimientos; track c.id) {
+        <div class="consentimiento-item">
+          <div class="consentimiento-info">
+            <strong>{{ c.nombrePlantilla }}</strong>
+            <span style="font-size: 12px; color: var(--text-muted);">{{ c.fecha }}</span>
+            @if (c.esMenor) {
+              <span class="badge-menor">Menor de edad</span>
+            }
+          </div>
+          <div class="consentimiento-acciones">
+            <button mat-stroked-button color="primary" (click)="verConsentimiento(c)">Ver PDF</button>
+            <button mat-stroked-button color="warn" (click)="eliminarConsentimiento(c.id)">Eliminar</button>
+          </div>
+        </div> 
+      }
+    </mat-card>
+  }
 
 } @else {
   <mat-card class="card">

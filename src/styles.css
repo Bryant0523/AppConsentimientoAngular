@@ -55,6 +55,7 @@ mat-card {
   box-shadow: var(--shadow) !important;
   border: 1px solid var(--border) !important;
   background: var(--surface) !important;
+  padding: 8px !important;
 }
 
 /* ====== BOTONES PRIMARIOS ====== */

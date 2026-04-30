@@ -10,7 +10,6 @@
     "electron:build": "ng build && electron electron/main.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
-    
   },
   "build": {
     "appId": "com.roook.hourscontrol",
@@ -21,7 +20,6 @@
     "files": [
       "electron/main.js",
       "electron/preload.js"
-      
     ],
     "win": {
       "target": "nsis",
@@ -35,7 +33,6 @@
       "target": "AppImage"
     }
   },
-  
   "private": true,
   "packageManager": "npm@11.9.0",
   "dependencies": {
@@ -67,6 +64,7 @@
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "@types/pdfmake": "^0.3.2",
+    "@types/signature_pad": "^2.3.6",
     "cross-env": "^10.1.0",
     "electron": "^40.8.0",
     "electron-rebuild": "^3.2.9",

@@ -1,8 +1,77 @@
+.card {
+  padding: 20px;
+}
+
 .search-bar {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .search-bar mat-form-field {
-  width: 360px;
-  margin: 0;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* LISTA */
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ITEM */
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.item:hover {
+  background: #fafafa;
+  border-color: #d0d0d0;
+}
+
+/* INFO */
+
+.item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paciente {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.meta {
+  font-size: 13px;
+  color: #666;
+}
+
+.dot {
+  margin: 0 6px;
+}
+
+/* ACCIONES */
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ESTADOS */
+
+.cargando,
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #888;
 }

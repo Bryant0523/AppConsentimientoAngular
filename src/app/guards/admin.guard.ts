@@ -1,17 +1,16 @@
-import { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AjustesService } from '../services/ajustes';
 
 export const adminGuard: CanActivateFn = () => {
+  const ajustesService = inject(AjustesService);
+  const router = inject(Router);
 
-  if (typeof window !== 'undefined') {
-
-    const autorizado = localStorage.getItem('admin');
-
-    if (autorizado === 'true') {
-      return true;
-    }
-
+  if (ajustesService.estaAutenticado()) {
+    return true;
   }
 
-  alert('Acceso restringido');
+  // Redirige a ajustes para que ingrese la clave
+  router.navigate(['/ajustes'], { queryParams: { redirect: 'admin' } });
   return false;
 };

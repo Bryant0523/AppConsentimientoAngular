@@ -1,150 +1,152 @@
 import { Injectable } from '@angular/core';
 
+declare global {
+  interface Window {
+    electronAPI: any;
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ElectronService {
-  private api: any;
 
-  constructor() {
-    if (typeof window !== 'undefined' && (window as any).electronAPI) {
-      this.api = (window as any).electronAPI;
-    }
-  }
-
-  isElectron(): boolean {
-    return !!this.api;
+  private get api() {
+    return window.electronAPI;
   }
 
   // ========================
   // WORD
   // ========================
-  async seleccionarArchivo(): Promise<string | null> {
-    return await this.api.seleccionarArchivo();
+  leerWord(filePath: string): Promise<{ success: boolean; html?: string; error?: string }> {
+    return this.api.leerWord(filePath);
   }
 
-  async leerWord(filePath: string): Promise<{ success: boolean; html?: string; error?: string }> {
-    return await this.api.leerWord(filePath);
+  seleccionarArchivo(): Promise<string | null> {
+    return this.api.seleccionarArchivo();
   }
-  //LOGO
-  async cargarLogo(ruta: string): Promise<string | null> {
-  return await this.api.cargarLogo(ruta);
-}
+
+  // ========================
+  // LOGO
+  // ========================
+  cargarLogo(nombreArchivo: string): Promise<string | null> {
+    return this.api.cargarLogo(nombreArchivo);
+  }
 
   // ========================
   // PACIENTES
   // ========================
-  async obtenerPacientes(): Promise<any[]> {
-  try {
-   
-    const resultado = await this.api.pacientes.obtener();
-    return resultado;
-  } catch (error) {
-    console.error('error en obtenerPacientes:', error);
-    return [];
-  }
-}
-
-  async crearPaciente(paciente: any): Promise<any> {
-    return await this.api.pacientes.crear(paciente);
+  obtenerPacientes(): Promise<any[]> {
+    return this.api.pacientes.obtener();
   }
 
-  async actualizarPaciente(paciente: any): Promise<any> {
-    return await this.api.pacientes.actualizar(paciente);
+  crearPaciente(paciente: any): Promise<any> {
+    return this.api.pacientes.crear(paciente);
   }
 
-  async eliminarPaciente(id: number): Promise<any> {
-    return await this.api.pacientes.eliminar(id);
+  actualizarPaciente(paciente: any): Promise<any> {
+    return this.api.pacientes.actualizar(paciente);
+  }
+
+  eliminarPaciente(id: number): Promise<any> {
+    return this.api.pacientes.eliminar(id);
   }
 
   // ========================
   // MEDICOS
   // ========================
-  async obtenerMedicos(): Promise<any[]> {
-    return await this.api.medicos.obtener();
+  obtenerMedicos(): Promise<any[]> {
+    return this.api.medicos.obtener();
   }
 
-  async crearMedico(medico: any): Promise<any> {
-    return await this.api.medicos.crear(medico);
+  crearMedico(medico: any): Promise<any> {
+    return this.api.medicos.crear(medico);
   }
 
-  async actualizarMedico(medico: any): Promise<any> {
-    return await this.api.medicos.actualizar(medico);
+  actualizarMedico(medico: any): Promise<any> {
+    return this.api.medicos.actualizar(medico);
   }
 
-  async eliminarMedico(id: number): Promise<any> {
-    return await this.api.medicos.eliminar(id);
+  eliminarMedico(id: number): Promise<any> {
+    return this.api.medicos.eliminar(id);
   }
 
   // ========================
   // ENFERMEROS
   // ========================
-  async obtenerEnfermeros(): Promise<any[]> {
-    return await this.api.enfermeros.obtener();
+  obtenerEnfermeros(): Promise<any[]> {
+    return this.api.enfermeros.obtener();
   }
 
-  async crearEnfermero(enfermero: any): Promise<any> {
-    return await this.api.enfermeros.crear(enfermero);
+  crearEnfermero(enfermero: any): Promise<any> {
+    return this.api.enfermeros.crear(enfermero);
   }
 
-  async actualizarEnfermero(enfermero: any): Promise<any> {
-    return await this.api.enfermeros.actualizar(enfermero);
+  actualizarEnfermero(enfermero: any): Promise<any> {
+    return this.api.enfermeros.actualizar(enfermero);
   }
 
-  async eliminarEnfermero(id: number): Promise<any> {
-    return await this.api.enfermeros.eliminar(id);
+  eliminarEnfermero(id: number): Promise<any> {
+    return this.api.enfermeros.eliminar(id);
+  }
+
+  // ========================
+  // GRUPOS
+  // ========================
+  obtenerGrupos(): Promise<any[]> {
+    return this.api.grupos.obtener();
+  }
+
+  crearGrupo(nombre: string): Promise<any> {
+    return this.api.grupos.crear(nombre);
+  }
+
+  eliminarGrupo(id: number): Promise<any> {
+    return this.api.grupos.eliminar(id);
   }
 
   // ========================
   // PLANTILLAS
   // ========================
-  async obtenerPlantillas(): Promise<any[]> {
-    return await this.api.plantillas.obtener();
+  obtenerPlantillas(): Promise<any[]> {
+    return this.api.plantillas.obtener();
   }
 
-  async crearPlantilla(plantilla: any): Promise<any> {
-    return await this.api.plantillas.crear(plantilla);
+  crearPlantilla(plantilla: any): Promise<any> {
+    return this.api.plantillas.crear(plantilla);
   }
 
-  async actualizarPlantilla(plantilla: any): Promise<any> {
-    return await this.api.plantillas.actualizar(plantilla);
+  actualizarPlantilla(plantilla: any): Promise<any> {
+    return this.api.plantillas.actualizar(plantilla);
   }
 
-  async eliminarPlantilla(id: number): Promise<any> {
-    return await this.api.plantillas.eliminar(id);
+  eliminarPlantilla(id: number): Promise<any> {
+    return this.api.plantillas.eliminar(id);
   }
 
-async obtenerGrupos(): Promise<any[]> {
-  return await this.api.grupos.obtener();
-}
-
-async crearGrupo(nombre: string): Promise<any> {
-  return await this.api.grupos.crear(nombre);
-}
-
-async eliminarGrupo(id: number): Promise<any> {
-  return await this.api.grupos.eliminar(id);
-}
-
-async obtenerHistorial(): Promise<any[]> {
-  return await this.api.historial.obtener();
-}
-
-async limpiarHistorialAntiguos(): Promise<any> {
-  return await this.api.historial.limpiarAntiguos();
-}
   // ========================
   // CONSENTIMIENTOS
   // ========================
-  async obtenerConsentimientos(documentopaciente: string): Promise<any[]> {
-    return await this.api.consentimientos.obtener(documentopaciente);
+  obtenerConsentimientos(documentoPaciente: string): Promise<any[]> {
+    return this.api.consentimientos.obtener(documentoPaciente);
   }
 
-  async crearConsentimiento(consentimiento: any): Promise<any> {
-    return await this.api.consentimientos.crear(consentimiento);
+  crearConsentimiento(consentimiento: any): Promise<any> {
+    return this.api.consentimientos.crear(consentimiento);
   }
 
-  async eliminarConsentimiento(id: number): Promise<any> {
-    return await this.api.consentimientos.eliminar(id);
+  eliminarConsentimiento(id: number): Promise<any> {
+    return this.api.consentimientos.eliminar(id);
+  }
+
+  // ========================
+  // HISTORIAL
+  // ========================
+  obtenerHistorial(): Promise<any[]> {
+    return this.api.historial.obtener();
+  }
+
+  limpiarHistorialAntiguo(): Promise<any> {
+    return this.api.historial.limpiarAntiguos();
   }
 }

@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatIconModule} from '@angular/material/icon'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ElectronService } from '../../services/electron';
 import pdfMake from 'pdfmake/build/pdfmake';
@@ -22,6 +23,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
     MatFormFieldModule,
     MatInputModule,
     MatSnackBarModule,
+    MatIconModule,
   ],
   templateUrl: './historial.html',
   styleUrl: './historial.css',
@@ -52,7 +54,7 @@ export class HistorialComponent implements OnInit {
   }
 
   async limpiarAntiguos() {
-    await this.electronService.limpiarHistorialAntiguos();
+    await this.electronService.limpiarHistorialAntiguo();
   }
 
   private mostrarMensaje(mensaje: string, tipo: 'exito' | 'error' = 'exito') {
@@ -95,6 +97,7 @@ export class HistorialComponent implements OnInit {
     texto = texto.replaceAll('{{medico}}', c.nombreMedico || '');
     texto = texto.replaceAll('{{enfermero}}', c.nombreEnfermero || '');
     texto = texto.replaceAll('{{fecha}}', c.fecha || '');
+    texto = texto.replaceAll('{{paciente.lugarExpedicion}}', c.lugarExpedicion || '');
 
     const parrafos = texto
       .split('\n')

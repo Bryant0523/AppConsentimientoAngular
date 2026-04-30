@@ -1,19 +1,94 @@
 /* LOGIN */
-.login-card{
-  max-width: 400px;
-  margin: 50px auto;
+
+.login-card {
+  max-width: 380px;
+  margin: 60px auto;
+  padding: 24px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* GRID ADMIN */
-.admin-grid{
+/* GRID */
+
+.admin-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }
 
-.admin-grid button{
-  height: 60px;
-  font-size: 16px;
+/* CARD */
+
+.card {
+  padding: 20px;
+  border-radius: 12px;
+}
+
+/* MENU */
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.menu button {
+  justify-content: flex-start;
+}
+
+/* LOGOUT */
+
+.logout {
+  margin-top: 10px;
+}
+
+/* FORM GRUPOS */
+
+.grupo-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.grupo-form mat-form-field {
+  flex: 1;
+}
+
+/* LISTA */
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ITEM */
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  transition: 0.2s;
+}
+
+.item:hover {
+  background: #fafafa;
+}
+
+.nombre {
+  font-weight: 500;
+}
+
+/* EMPTY */
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 20px;
 }
